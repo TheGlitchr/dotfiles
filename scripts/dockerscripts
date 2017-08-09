@@ -8,8 +8,7 @@ sudo apt-get install -y \
      gnupg2 \
      software-properties-common \
      mdadm \
-     wget \
-     git
+     wget 
 
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 
