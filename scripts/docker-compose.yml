@@ -101,7 +101,7 @@ resilio-sync:
   container_name: resilio-sync
   volumes:
     - /config/resilio-sync:/config
-    - /data/sync:/sync
+    - /data/sync:/sync/folder
   restart: unless-stopped
   ports:
     - 8888:8888
@@ -115,3 +115,19 @@ portainer:
   restart: unless-stopped
   ports:
     - 9000:9000
+
+ts3:
+  image: linuxserver/gsm-ts3
+  container_name: gsm-ts3
+  net: "host"
+  volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /config/ts3:/config
+  restart: unless-stopped
+
+openvpn-as:
+  image: linuxserver/openvpn-as
+  container_name: openvpn-as
+  volumes:
+    - /config/openvpn-as:/config
+  net: "host"
