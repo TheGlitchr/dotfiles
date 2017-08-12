@@ -1,118 +1,117 @@
-#PlexPy
-docker run -d \
---name=plexpy \
--v /config/plexpy:/config \
--v /data/config/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro \
--p 8181:8181 \
---restart unless-stopped \
-linuxserver/plexpy
+plex:
+  image: plexinc/pms-docker
+  container_name: plex
+  volumes:
+    - /data/movies:/data/movies
+    - /data/tv:/data/tv
+    - /data/music:/data/music
+    - /config/plex:/config
+    - /transcode:/transcode
+  restart: unless-stopped
+  net: "host"
 
-#Plex
-docker run -d \
---name=plex \
---net=host \
--e VERSION=latest \
--v /data/movies:/data/movies \
--v /data/tv:/data/tv \
--v /data/music:/data/music \
--v /config/plex:/config \
--v /transcode:/transcode \
---restart unless-stopped \
-plexinc/pms-docker
+plexpy:
+  image: linuxserver/plexpy
+  container_name: plexpy
+  volumes:
+    - /config/plexpy:/config
+    - /config/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro
+  restart: unless-stopped
+  ports:
+    - 8181:8181
 
-#Sonarr
-docker run -d \
---name sonarr \
--p 8989:8989 \
--v /etc/localtime:/etc/localtime:ro \
--v /config/sonarr:/config \
--v /data/tv:/tv \
--v /data/download/sabnzbd/complete/tv:/downloads \
---restart unless-stopped \
-linuxserver/sonarr
+sonarr:
+  image: linuxserver/sonarr
+  container_name: sonarr
+  volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /config/sonarr:/config
+    - /data/tv:/tv
+    - /data/download/sabnzbd/complete/tv:/downloads
+  restart: unless-stopped
+  ports:
+    - 8989:8989
 
-#Couchpotato
-docker run -d \
---name=couchpotato \
--v /config/couchpotato:/config \
--v /data/download/sabnzbd/complete/movies:/downloads \
--v /data/movies:/movies \
---restart unless-stopped \
--p 5050:5050 \
-linuxserver/couchpotato
+couchpotato:
+  image: linuxserver/couchpotato
+  container_name: couchpotato
+  volumes:
+    - /config/couchpotato:/config
+    - /data/download/sabnzbd/complete/movies:/downloads
+    - /data/movies:/movies
+  restart: unless-stopped
+  ports:
+    - 5050:5050
 
-#Sabnzbd
-docker run -d \
---name=sabnzbd \
--v /config/sabnzbd:/config \
--v /data/download/sabnzbd/complete:/downloads \
--v /data/download/sabnzbd/incomplete:/incomplete-downloads \
---restart unless-stopped \
--p 8080:8080 \
-linuxserver/sabnzbd
+sabnzbd:
+    image: linuxserver/sabnzbd
+    container_name: sabnzbd
+    volumes:
+      - /config/sabnzbd:/config
+      - /data/download/sabnzbd/complete:/downloads
+      - /data/download/sabnzbd/incomplete:/incomplete-downloads
+    restart: unless-stopped
+    ports:
+      - 8080:8080
 
-#Deluge
-docker run -d \
---name deluge \
---net=host \
---restart unless-stopped \
--v /data/download/deluge:/downloads \
--v /config/deluge:/config \
-linuxserver/deluge
+deluge:
+    image: linuxserver/deluge
+    container_name: deluge
+    volumes:
+      - /data/download/deluge:/downloads
+      - /config/deluge:/config
+    net: "host"
+    restart: unless-stopped
 
-#Mylar
-docker run -d \
---name=mylar \
---restart unless-stopped \
--v /config/mylar:/config/ \
--v /data/download/sabnzbd/complete/comics:/downloads \
--v /data/comics:/comics \
--p 8090:8090 \
-linuxserver/mylar
+mylar:
+  image: linuxserver/mylar
+  container_name: mylar
+  volumes:
+    - /data/comics:/comics
+    - /data/download/sabnzbd/complete/comics:/downloads
+    - /config/mylar:/config/
+  restart: unless-stopped
+  ports:
+    - 8090:8090
 
-#Ubooquity
-docker run -d \
---name=ubooquity \
--v /config/ubooquity:/config \
--v /data/books:/books \
--v /data/comics:/comics \
--p 2202:2202 \
--p 2203:2203 \
---restart unless-stopped \
-linuxserver/ubooquity
+ubooquity:
+  image: linuxserver/ubooquity
+  container_name: ubooquity
+  volumes:
+    - /config/ubooquity:/config
+    - /data/books:/books
+    - /data/comics:/comics
+  ports:
+    - 2202:2202
+    - 2203:2203
+  restart: unless-stopped
 
-#Calibre Web
-docker run -d \
---name=calibre-web \
---restart unless-stopped \
--v /config/calibre-web:/config \
--v /data/books:/books \
--p 8083:8083 \
-linuxserver/calibre-web
+calire-web:
+  image: linuxserver/calibre-web
+  container_name: calibre-web
+  volumes:
+    - /config/calibre-web:/config
+    - /data/books:/books
+  ports:
+    - 8083:8083
+  restart: unless-stopped
 
-#Resilio Sync
-docker run -d \
---name=resilio-sync \
---restart unless-stopped \
--v /config/resilio-sync:/config \
--v /data/sync:/sync \
---restart unless-stopped \
--p 8888:8888 \
--p 55555:55555\
-linuxserver/resilio-sync
+resilio-sync:
+  image: linuxserver/resilio-sync
+  container_name: resilio-sync
+  volumes:
+    - /config/resilio-sync:/config
+    - /data/sync:/sync
+  restart: unless-stopped
+  ports:
+    - 8888:8888
+    - 55555:55555
 
-#Minio
-docker run -d \
---name=minio \
--p 6000:9000 \
---restart unless-stopped \
-minio/minio server \
--v /data/minio:/export
-
-#Portainer
-docker run -d \
---name=portainer \
---restart unless-stopped \
--p 9000:9000 \
--v /var/run/docker.sock:/var/run/docker.sock \
-portainer/portainer
+portainer:
+  image: portainer/portainer
+  container_name: portainer
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  restart: unless-stopped
+  ports:
+    - 9000:9000
