@@ -8,7 +8,7 @@ sudo apt-get install -y \
      gnupg2 \
      software-properties-common \
      mdadm \
-     wget 
+     wget
 
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 
@@ -19,108 +19,6 @@ sudo add-apt-repository \
 
 sudo apt-get update
 
-sudo apt-get install -y docker-ce
-
-#PlexPy
-docker run -d \
---name=plexpy \
--v /config/plexpy:/config \
--v /data/config/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro \
--p 8181:8181 \
---restart unless-stopped \
-linuxserver/plexpy
-
-#Plex
-docker run -d \
---name=plex \
---net=host \
--e VERSION=latest \
--v /data/movies:/data/movies \
--v /data/tv:/data/tv \
--v /data/music:/data/music \
--v /config/plex:/config \
--v /transcode:/transcode \
---restart unless-stopped \
-plexinc/pms-docker
-
-#Sonarr
-docker run -d \
---name sonarr \
--p 8989:8989 \
--v /etc/localtime:/etc/localtime:ro \
--v /config/sonarr:/config \
--v /data/tv:/tv \
--v /data/download/sabnzbd/complete/tv:/downloads \
---restart unless-stopped \
-linuxserver/sonarr
-
-#Couchpotato
-docker run -d \
---name=couchpotato \
--v /config/couchpotato:/config \
--v /data/download/sabnzbd/complete/movies:/downloads \
--v /data/movies:/movies \
---restart unless-stopped \
--p 5050:5050 \
-linuxserver/couchpotato
-
-#Sabnzbd
-docker run -d \
---name=sabnzbd \
--v /config/sabnzbd:/config \
--v /data/download/sabnzbd/complete:/downloads \
--v /data/download/sabnzbd/incomplete:/incomplete-downloads \
---restart unless-stopped \
--p 8080:8080 \
--p 9090:9090 \
-linuxserver/sabnzbd
-
-#Deluge
-docker run -d \
---name deluge \
---net=host \
---restart unless-stopped \
--v /data/download/deluge:/downloads \
--v /config/deluge:/config \
-linuxserver/deluge
-
-#Mylar
-docker run -d \
---name=mylar \
---restart unless-stopped \
--v /config/mylar:/config/ \
--v /data/download/sabnzbd/complete/comics:/downloads \
--v /data/comics:/comics \
--p 8090:8090 \
-linuxserver/mylar
-
-#Ubooquity
-docker run -d \
---name=ubooquity \
--v /config/ubooquity:/config \
--v /data/books:/books \
--v /data/comics:/comics \
--p 2202:2202 \
--p 2203:2203 \
---restart unless-stopped \
-linuxserver/ubooquity
-
-#Calibre Web
-docker run -d \
---name=calibre-web \
---restart unless-stopped \
--v /config/calibre-web:/config \
--v /data/books:/books \
--p 8083:8083 \
-linuxserver/calibre-web
-
-#Resilio Sync
-docker run -d \
---name=resilio-sync \
---restart unless-stopped \
--v /config/resilio-sync:/config \
--v /data/sync:/sync \
---restart unless-stopped \
--p 8888:8888 \
--p 55555:55555\
- linuxserver/resilio-sync
+sudo apt-get install -y docker-ce docker-compose
+sudo usermod -aG docker $USER
+sudo docker-compose up -d
